@@ -5,60 +5,8 @@
     <div class="shadowTextWrap"></div>
     <div class="content">
       <div class="place_shade"></div>
-      <!-- 地区选择 -->
-      <div class="comWrap" id="placeSelect">
-        <div class="placeWrap">
-          <ul class="placeBox" id="province"></ul>
-          <ul
-            class="placeBox"
-            style="box-shadow: -6px 0 6px 0 rgba(153,153,153,0.18);"
-            id="city"
-          ></ul>
-          <ul
-            class="placeBox"
-            style="box-shadow: -6px 0 6px 0 rgba(153,153,153,0.18);"
-            id="district"
-          ></ul>
-        </div>
-      </div>
-      <!-- 号码归属 -->
-      <div class="comWrap" id="numberWrap">
-        <div class="placeWrap">
-          <ul class="placeBox" id="provinceNum"></ul>
-          <ul
-            class="placeBox"
-            style="box-shadow: -6px 0 6px 0 rgba(153,153,153,0.18);"
-            id="cityNum"
-          ></ul>
-        </div>
-      </div>
-      <!-- 选择号码 -->
-      <div class="choose_phone_number">
-        <div class="choose_content">
-          <div class="choose_title">
-            请您选择号码<span>（选号别纠结，以后可以免费换号）</span>
-          </div>
-          <div class="choose_query">
-            <input id="chooseIdx" placeholder="生日、幸运数字等" />
-            <img
-              onclick="searchByInput()"
-              class="searchNumber"
-              src="images/assets/query.png"
-            />
-          </div>
-          <div class="phone_number">
-            <!-- <ul class="phone_number_ul"></ul> -->
-          </div>
-        </div>
-        <div class="choose_change" onclick="exchangeNumber()">
-          <span>换一批</span>
-        </div>
-        <div onclick="closeChooseNumber()" class="close">
-          <img src="images/assets/close.png" />
-        </div>
-      </div>
       <!-- 申请成功弹窗 -->
-      <div class="applySuccess">
+      <div v-if="applySuccess" class="applySuccess">
         <div class="apply_content">
           <div class="apply_title"><span>下单成功！</span></div>
           <div class="apply_text">
@@ -71,14 +19,16 @@
         </div>
       </div>
       <!-- 身份验证失败弹窗 -->
-      <div class="comformFail">
+      <div v-if="comformFail" class="comformFail">
         <!-- <span>您的身份证信息未在公安系统登记，请您核对或更换证件信息。</span> -->
         <div id="errorMsg"></div>
         <div class="close" onclick="closecomform()">
           <img src="images/assets/close.png" />
         </div>
       </div>
-      <div class="top_title">已选择<span class="selectIndex"></span></div>
+      <div class="top_title">
+        已选择<span class="selectIndex">腾讯大王卡</span>
+      </div>
       <div class="top_title">根据国家实名制要求，请准确提供身份证信息</div>
       <div class="form">
         <div id="nameBox">
@@ -155,7 +105,7 @@
           <img
             id="agreeFlag"
             onclick="agree()"
-            src="images/assets/no_check.png"
+            src="../assets/no_check.png"
             alt=""
           />
           <div class="agree_text">
@@ -193,3 +143,143 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      comformFail: false,
+      applySuccess: false
+    };
+  }
+};
+</script>
+<style lang="scss" scoped>
+.mainPage {
+  background: #f8f8f8;
+  .content {
+    min-height: 100vh;
+    width: 100%;
+    padding: 15px 0;
+    z-index: 0;
+    .top_title {
+      font-size: 13px;
+      padding: 0 15px 10px;
+      color: #666666;
+      letter-spacing: 0;
+      font-weight: 600;
+      span {
+        color: #d5af6d;
+      }
+      .red_text {
+        color: #d04a43;
+        font-size: 12px;
+      }
+    }
+    .form {
+      background: #f2f2f2;
+      color: #666666;
+      font-size: 13px;
+      div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1px;
+        padding: 0 15px;
+        box-sizing: border-box;
+        border: 1px solid #fff;
+        background: #fff;
+      }
+      .red_border {
+        border: 1px solid #d04a43;
+      }
+      input {
+        flex: 1;
+        height: 45px;
+        border: 0px;
+        color: #666666;
+        font-size: 13px;
+      }
+      span {
+        display: inline-block;
+        width: 82px;
+      }
+    }
+    .agree {
+      padding: 15px 13px;
+      margin: 10px 0;
+      background: #ffffff;
+      font-size: 12px;
+      color: #999999;
+      .agreement {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+      }
+      img {
+        height: 14px;
+        width: 14px;
+        padding-right: 6px;
+        min-width: 14px;
+      }
+      .agree_text a {
+        color: #ad7e34;
+        text-decoration: none;
+      }
+    }
+    .reference {
+      display: flex;
+      color: #666666;
+      font-size: 13px;
+      background: #fff;
+      padding: 0 15px;
+      align-items: center;
+      height: 45px;
+      span {
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+      img {
+        height: 14px;
+        width: 14px;
+        padding-right: 6px;
+      }
+      input {
+        margin-left: 20px;
+        border: none;
+        flex: 1;
+      }
+      input:disabled {
+        background-color: transparent;
+      }
+    }
+    .commit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .commit_button {
+        background: #d1ad73;
+        border-radius: 6px;
+        width: 351px;
+        height: 58px;
+        color: #fff;
+        font-size: 16px;
+        margin: 15px 0 6px 0;
+        border: none;
+      }
+    }
+    .bottom_text {
+      font-size: 9px;
+      color: #bbbbbb;
+      text-align: center;
+      padding: 0 43px;
+      margin-top: 6px;
+      span {
+        display: block;
+        letter-spacing: 0;
+        line-height: 11px;
+      }
+    }
+  }
+}
+</style>
