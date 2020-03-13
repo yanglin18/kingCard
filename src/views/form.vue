@@ -4,6 +4,10 @@
     <div class="shade"></div>
     <div class="shadowTextWrap"></div>
     <div class="content">
+      <placeSelect
+        @getName="reSelectPlace"
+        :showPlaceSelect="showSelectFlag"
+      ></placeSelect>
       <div class="place_shade"></div>
       <!-- 申请成功弹窗 -->
       <div v-if="applySuccess" class="applySuccess">
@@ -15,7 +19,7 @@
           </div>
         </div>
         <div class="close" onclick="closeToast()">
-          <img src="images/assets/close.png" />
+          <img src="../assets/close.png" />
         </div>
       </div>
       <!-- 身份验证失败弹窗 -->
@@ -23,7 +27,7 @@
         <!-- <span>您的身份证信息未在公安系统登记，请您核对或更换证件信息。</span> -->
         <div id="errorMsg"></div>
         <div class="close" onclick="closecomform()">
-          <img src="images/assets/close.png" />
+          <img src="../assets/close.png" />
         </div>
       </div>
       <div class="top_title">
@@ -57,16 +61,15 @@
         >
       </div>
       <div class="form">
-        <div id="addressBox" class="Box">
+        <div id="addressBox" class="Box" @click="selectPlace">
           <span>所在地区</span>
           <div
             class="inputDiv"
-            onclick="showCom()"
             style="height: 100%;flex: 1;border: none;padding: 0;margin-bottom: 0;"
           >
-            <text id="address">所在区/县</text>
+            <span id="address">{{ select_place }}</span>
           </div>
-          <img src="images/assets/to_right.png" />
+          <img src="../assets/toRight.png" />
         </div>
         <div id="addressDetailWrap">
           <input
@@ -86,7 +89,7 @@
           >
             <text id="phone_address">请选择号码归属地</text>
           </div>
-          <img src="images/assets/to_right.png" />
+          <img src="../assets/toRight.png" />
         </div>
         <div class="Box" id="chooseNumBox">
           <span>选择号码</span>
@@ -97,7 +100,7 @@
           >
             <text id="phone_number_address"></text>
           </div>
-          <img src="images/assets/to_right.png" />
+          <img src="../assets/toRight.png" />
         </div>
       </div>
       <div class="agree">
@@ -124,7 +127,7 @@
         <img
           id="referMan"
           onclick="addRefer()"
-          src="images/assets/no_check.png"
+          src="../assets/no_check.png"
           alt=""
         />
         <span>推荐人信息</span>
@@ -144,12 +147,45 @@
   </div>
 </template>
 <script>
+import placeSelect from "@/views/components/placeSelect";
 export default {
+  components: {
+    placeSelect
+  },
   data() {
     return {
       comformFail: false,
-      applySuccess: false
+      applySuccess: false,
+      showSelectFlag: false,
+      select_place: "所在区/县",
+      form: {
+        itemcode: "",
+        goodsId: "",
+        p_code: "",
+        c_code: "",
+        phoneNum: "",
+        name: "",
+        certNo: "",
+        mobile: "",
+        p_p_code: "",
+        p_c_code: "",
+        p_d_code: "",
+        code: "",
+        address: "",
+        recommend: ""
+      }
     };
+  },
+  methods: {
+    selectPlace() {
+      this.$store.commit("set_showSelectPlace", 1);
+    },
+    reSelectPlace(e) {
+      this.select_place = e.select_name;
+      this.form.p_p_code = e.p_id;
+      this.form.p_c_code = e.c_id;
+      this.form.p_d_code = e.d_id
+    }
   }
 };
 </script>
@@ -163,16 +199,17 @@ export default {
     z-index: 0;
     .top_title {
       font-size: 13px;
-      padding: 0 15px 10px;
+      padding: 15px 0 10px 15px;
       color: #666666;
       letter-spacing: 0;
       font-weight: 600;
       span {
-        color: #d5af6d;
+        color: #1694fb;
       }
       .red_text {
-        color: #d04a43;
+        color: #d91b11;
         font-size: 12px;
+        font-weight: normal;
       }
     }
     .form {
@@ -203,6 +240,36 @@ export default {
         display: inline-block;
         width: 82px;
       }
+      /* 验证码 */
+      .getcode {
+        padding: 7px 10px;
+        background: #d1ad73;
+        border-radius: 3px;
+        width: 110px;
+        font-size: 13px;
+        color: #ffffff;
+        letter-spacing: 0;
+        border: none;
+      }
+      .Box {
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        img {
+          height: 17px;
+          width: 9px;
+        }
+        .inputDiv {
+          span {
+            font-size: 13px;
+            color: #bbbbbb;
+            letter-spacing: 0;
+            width: 65.5vw;
+            display: inline-block;
+          }
+        }
+      }
     }
     .agree {
       padding: 15px 13px;
@@ -222,7 +289,7 @@ export default {
         min-width: 14px;
       }
       .agree_text a {
-        color: #ad7e34;
+        color: #1694fb;
         text-decoration: none;
       }
     }
@@ -258,10 +325,10 @@ export default {
       align-items: center;
       justify-content: center;
       .commit_button {
-        background: #d1ad73;
+        background: #1694fb;
         border-radius: 6px;
         width: 351px;
-        height: 58px;
+        height: 38px;
         color: #fff;
         font-size: 16px;
         margin: 15px 0 6px 0;
