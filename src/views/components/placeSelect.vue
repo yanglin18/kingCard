@@ -1,6 +1,6 @@
 <template>
   <div v-if="$store.state.showSelectPlace" class="comWrap">
-    <div class="place_shade" @click="select"></div>
+    <div class="place_shade" @click="hide"></div>
     <div class="placeWrap">
       <ul class="placeBox">
         <li
@@ -33,7 +33,6 @@
 <script>
 import placeArr from "@/views/data/data(1).js";
 export default {
-  props: ["showPlaceSelect"],
   data() {
     return {
       placeArr: [],
@@ -43,13 +42,14 @@ export default {
       clickedC: 0,
       p_name: "",
       c_name: "",
-      d_name:"",
+      d_name: "",
 
       placeData: {
         p_id: "",
         c_id: "",
         d_id: "",
-        select_name: ""
+        select_name: "",
+        number_place: ""
       }
     };
   },
@@ -65,7 +65,7 @@ export default {
     this.placeData.c_id = this.province[0].id;
 
     this.d_name = this.city[0].name;
-    this.placeData.d_id = this.city[0].id
+    this.placeData.d_id = this.city[0].id;
   },
   methods: {
     getCity(e, index) {
@@ -74,6 +74,11 @@ export default {
       this.p_name = e.name;
       this.placeData.p_id = e.id;
       this.clickedP = index;
+
+      // 市区默认选择第一个
+      this.city = e.city[0].area;
+      this.c_name = e.city[0].name;
+      this.placeData.c_id =e.city[0].id;
     },
     getDist(e, index) {
       this.city = e.area;
@@ -85,7 +90,13 @@ export default {
       this.$store.commit("set_showSelectPlace", 0);
       this.placeData.d_id = e.id;
       this.placeData.select_name = this.p_name + this.c_name + e.name;
+      this.placeData.number_place = this.p_name + this.c_name;
+      this.$store.commit("set_p_code",this.placeData.p_id);
+      this.$store.commit("set_c_code",this.placeData.c_id)
       this.$emit("getName", this.placeData);
+    },
+    hide() {
+      this.$store.commit("set_showSelectPlace", 0);
     }
   }
 };

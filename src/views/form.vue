@@ -1,14 +1,20 @@
 <template>
   <div class="mainPage">
     <!-- 遮罩 -->
-    <div class="shade"></div>
-    <div class="shadowTextWrap"></div>
+    <div
+      class="shade"
+      v-if="$store.state.showChooseNumber || requestFail || applySuccess"
+    ></div>
+    <!-- 请求失败的弹窗 -->
+    <div v-if="requestFail" class="shadowTextWrap">{{ message }}</div>
     <div class="content">
-      <placeSelect
-        @getName="reSelectPlace"
-        :showPlaceSelect="showSelectFlag"
-      ></placeSelect>
-      <div class="place_shade"></div>
+      <placeSelect @getName="reSelectPlace"></placeSelect>
+      <numberWrap @getNumberPlace="reSelectNumberPlace"></numberWrap>
+      <chooseNumber @number="getSelectNumber"></chooseNumber>
+      <div
+        v-if="$store.state.showSelectPlace || $store.state.showSelectNumPlace"
+        class="place_shade"
+      ></div>
       <!-- 申请成功弹窗 -->
       <div v-if="applySuccess" class="applySuccess">
         <div class="apply_content">
@@ -24,8 +30,7 @@
       </div>
       <!-- 身份验证失败弹窗 -->
       <div v-if="comformFail" class="comformFail">
-        <!-- <span>您的身份证信息未在公安系统登记，请您核对或更换证件信息。</span> -->
-        <div id="errorMsg"></div>
+        <span>您的身份证信息未在公安系统登记，请您核对或更换证件信息。</span>
         <div class="close" onclick="closecomform()">
           <img src="../assets/close.png" />
         </div>
@@ -33,24 +38,29 @@
       <div class="top_title">
         已选择<span class="selectIndex">腾讯大王卡</span>
       </div>
-      <div class="top_title">根据国家实名制要求，请准确提供身份证信息</div>
+      <div class="top_title" :class="showRed > 0 ? 'turnRed' : ''">
+        {{ Toast }}
+      </div>
       <div class="form">
-        <div id="nameBox">
+        <div :class="showRed === 1 ? 'redBorder' : ''">
           <span>姓名</span>
-          <input id="name" placeholder="请输入身份证件姓名" /><br />
+          <input v-model="form.name" placeholder="请输入身份证件姓名" /><br />
         </div>
-        <div id="IDcardBox">
+        <div :class="showRed === 2 ? 'redBorder' : ''">
           <span>身份证</span>
-          <input id="IDcard" placeholder="请输入身份证号" /><br />
+          <input v-model="form.certNo" placeholder="请输入身份证号" /><br />
         </div>
-        <div id="phoneNumBox">
+        <div :class="showRed === 3 ? 'redBorder' : ''">
           <span>联系电话</span>
-          <input id="phone" placeholder="请输入联系电话" />
+          <input v-model="form.mobile" placeholder="请输入联系电话" />
         </div>
-        <div id="codeDiv">
+        <div :class="showRed === 4 ? 'redBorder' : ''">
           <span>验证码</span>
-          <input id="code" placeholder="请输入验证码" />
-          <button class="getcode" id="code_button" onclick="getCode()">
+          <input v-model="form.code" placeholder="请输入验证码" />
+          <button v-if="haveSend" class="havesend">
+            {{ secend }}后重新获取
+          </button>
+          <button v-else class="getcode" @click="getCode()">
             获取验证码
           </button>
         </div>
@@ -61,44 +71,50 @@
         >
       </div>
       <div class="form">
-        <div id="addressBox" class="Box" @click="selectPlace">
+        <div
+          class="Box"
+          :class="showRed === 5 ? 'redBorder' : ''"
+          @click="selectPlace"
+        >
           <span>所在地区</span>
           <div
             class="inputDiv"
             style="height: 100%;flex: 1;border: none;padding: 0;margin-bottom: 0;"
           >
-            <span id="address">{{ select_place }}</span>
+            <span>{{ select_place }}</span>
           </div>
           <img src="../assets/toRight.png" />
         </div>
-        <div id="addressDetailWrap">
+        <div :class="showRed === 6 ? 'redBorder' : ''">
           <input
-            id="addressDetail"
+            v-model="form.address"
             placeholder="街道/镇+村/小区/写字楼+门牌号"
           />
         </div>
       </div>
       <div class="top_title title_bold">请选择号码</div>
       <div class="form">
-        <div id="numberBelong" class="Box">
+        <div class="Box" @click="selectNumberPlace">
           <span>号码归属</span>
           <div
             class="inputDiv"
-            onclick="showNumberPlace()"
             style="height: 100%;flex: 1;border: none;padding: 0;"
           >
-            <text id="phone_address">请选择号码归属地</text>
+            <span>{{ number_place }}</span>
           </div>
           <img src="../assets/toRight.png" />
         </div>
-        <div class="Box" id="chooseNumBox">
+        <div
+          class="Box"
+          @click="selectNumber"
+          :class="showRed === 7 ? 'redBorder' : ''"
+        >
           <span>选择号码</span>
           <div
             class="inputDiv"
-            onclick="showChooseNumber()"
             style="height: 100%;flex: 1;border: none;padding: 0;"
           >
-            <text id="phone_number_address"></text>
+            {{ form.phoneNum }}
           </div>
           <img src="../assets/toRight.png" />
         </div>
@@ -106,11 +122,12 @@
       <div class="agree">
         <div class="agreement">
           <img
-            id="agreeFlag"
-            onclick="agree()"
+            v-if="!userAgree"
+            @click="agree"
             src="../assets/no_check.png"
             alt=""
           />
+          <img v-else @click="agree" src="../assets/check.png" alt="" />
           <div class="agree_text">
             我已阅读并同意<a onclick="toUserAgreement()"
               >《客户入网服务协议及业务协议》</a
@@ -125,16 +142,21 @@
       </div>
       <div class="reference">
         <img
-          id="referMan"
-          onclick="addRefer()"
+          v-if="!referFlag"
+          @click="addRefer"
           src="../assets/no_check.png"
           alt=""
         />
+        <img v-else @click="addRefer" src="../assets/check.png" alt="" />
         <span>推荐人信息</span>
-        <input id="refer" placeholder="请填写推荐人号码" />
+        <input
+          v-model="form.recommend"
+          :disabled="!referFlag"
+          placeholder="请填写推荐人号码"
+        />
       </div>
       <div class="commit">
-        <button class="commit_button" onclick="commit()">
+        <button class="commit_button" @click="commit">
           立即提交，免费送货上门
         </button>
       </div>
@@ -148,9 +170,13 @@
 </template>
 <script>
 import placeSelect from "@/views/components/placeSelect";
+import numberWrap from "@/views/components/numberWrap";
+import chooseNumber from "@/views/components/chooseNumber";
 export default {
   components: {
-    placeSelect
+    placeSelect,
+    numberWrap,
+    chooseNumber
   },
   data() {
     return {
@@ -158,9 +184,19 @@ export default {
       applySuccess: false,
       showSelectFlag: false,
       select_place: "所在区/县",
+      number_place: "请选择号码归属",
+      Toast: "根据国家实名制要求，请准确提供身份证信息",
+      // 请求失败的弹窗
+      requestFail: false,
+      message: "",
+      userAgree: false,
+      showRed: 0,
+      haveSend: false,
+      referFlag: false,
+      secend: 60,
       form: {
         itemcode: "",
-        goodsId: "",
+        goodsId: "981610241535",
         p_code: "",
         c_code: "",
         phoneNum: "",
@@ -176,20 +212,242 @@ export default {
       }
     };
   },
+  mounted() {
+    let inputs = document.querySelectorAll("input");
+    for (let i of inputs) {
+      i.addEventListener("focus", () => {
+        this.showRed = 0;
+      });
+    }
+  },
   methods: {
     selectPlace() {
       this.$store.commit("set_showSelectPlace", 1);
     },
+    selectNumberPlace() {
+      if (this.select_place === "所在区/县") {
+        (this.Toast = "请先选择所在地区"), (this.showRed = 5);
+        return;
+      }
+      this.$store.commit("set_showSelectNumPlace", 1);
+    },
+    selectNumber() {
+      if (this.select_place === "所在区/县") {
+        (this.Toast = "请先选择所在地区"), (this.showRed = 5);
+        return;
+      }
+      this.$store.commit("set_showChooseNumber", 1);
+    },
+    // 接收组件返回信息
     reSelectPlace(e) {
       this.select_place = e.select_name;
       this.form.p_p_code = e.p_id;
       this.form.p_c_code = e.c_id;
-      this.form.p_d_code = e.d_id
+      this.form.p_d_code = e.d_id;
+      this.form.p_code = e.p_id;
+      this.form.c_code = e.c_id;
+      this.number_place = e.number_place;
+    },
+    reSelectNumberPlace(e) {
+      console.log("返回", e);
+      this.number_place = e.select_name;
+      this.form.p_code = e.p_id;
+      this.form.c_code = e.c_id;
+    },
+    getSelectNumber(e) {
+      this.form.phoneNum = e;
+    },
+    agree() {
+      this.userAgree = !this.userAgree;
+    },
+    addRefer() {
+      this.referFlag = !this.referFlag;
+    },
+    // 获取验证码
+    getCode() {
+      let phoneRex = /^1[3456789]\d{9}$/;
+      if (this.form.mobile === "") {
+        this.Toast = "请输入您的联系电话";
+        this.showRed = 3;
+        return;
+      }
+      if (!phoneRex.test(this.form.mobile)) {
+        this.Toast = "请输入正确的手机号";
+        this.showRed = 3;
+        return;
+      }
+      this.$axios({
+        url:
+          "https://simcard.yingbei365.com/public/index.php/member/Index/getCode",
+        method: "post",
+        data: this.$qs.stringify({
+          mobile: this.form.mobile
+        })
+      })
+        .then(res => {
+          if (res.data.code == 0) {
+            this.haveSend = true;
+            let ss = 60;
+            let timer = setInterval(e => {
+              ss--;
+              this.secend = ss;
+              if (ss === 0) {
+                clearInterval(timer);
+              }
+            }, 1000);
+          }
+        })
+        .catch({});
+    },
+    nameInvalid() {
+      console.log("22222222222");
+    },
+    // 验证
+    validator() {
+      let nameRex = /^[\u4E00-\u9FA5]{2,4}$/;
+      let phoneRex = /^1[3456789]\d{9}$/;
+      let IDcardRex = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+      if (!nameRex.test(this.form.name)) {
+        this.Toast = "请输入您的真实姓名";
+        this.showRed = 1;
+        return;
+      }
+      if (this.form.certNo === "") {
+        this.Toast = "请输入您的身份证";
+        this.showRed = 2;
+        return;
+      }
+      if (!IDcardRex.test(this.form.certNo)) {
+        this.Toast = "请输入正确的身份证";
+        this.showRed = 2;
+        return;
+      }
+      if (this.form.mobile === "") {
+        this.Toast = "请输入您的联系电话";
+        this.showRed = 3;
+        return;
+      }
+      if (!phoneRex.test(this.form.mobile)) {
+        this.Toast = "请输入正确的手机号";
+        this.showRed = 3;
+        return;
+      }
+      if (this.form.code === "") {
+        this.Toast = "请输入验证码";
+        this.showRed = 4;
+        return;
+      }
+      if (this.select_place === "所在区/县") {
+        this.Toast = "请选择配送地址的所在地区";
+        this.showRed = 5;
+        return;
+      }
+
+      if (this.form.address === "") {
+        this.Toast = "请输入详细地址";
+        this.showRed = 6;
+        return;
+      }
+      if (this.form.address.length < 4) {
+        this.Toast = "详细地址不得少于四个字";
+        this.showRed = 6;
+        return;
+      }
+      if (this.form.phoneNum === "") {
+        this.Toast = "请选择手机号";
+        this.showRed = 7;
+        return;
+      }
+      if (!this.userAgree) {
+        this.Toast = "请阅读并同意接受用户协议";
+        this.showRed = 9;
+        return;
+      }
+      if (this.referFlag && this.form.recommend === "") {
+        this.Toast = "请输入推荐人号码";
+        this.showRed = 8;
+        return;
+      }
+    },
+    commit() {
+      this.validator();
+      this.Toast = "根据国家实名制要求，请准确提供身份证信息";
+      this.$axios({
+        method: "post",
+        url:
+          "https://simcard.yingbei365.com/public/index.php/member/index/create_order",
+        data: this.$qs.stringify(this.form)
+      })
+        .then(response => {
+          if (response.data.code == 0) {
+            this.applySuccess = true;
+          } else {
+            this.requestFail = true;
+            this.message = response.data.msg;
+            setTimeout(() => {
+              this.requestFail = false;
+            }, 3000);
+          }
+        })
+        .catch(err => {});
     }
   }
 };
 </script>
 <style lang="scss" scoped>
+// 申请成功
+.applySuccess,
+.comformFail {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+}
+// 定位
+.place_shade {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1500;
+}
+/* 遮罩 */
+.shade {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.7);
+}
+// input 的placeholder
+::-webkit-input-placeholder {
+  font-size: 13px;
+  color: #bbbbbb;
+  letter-spacing: 0;
+}
+// 异常吐司
+.shadowTextWrap {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  min-width: 60%;
+  max-width: 100%;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.8);
+}
+
 .mainPage {
   background: #f8f8f8;
   .content {
@@ -199,10 +457,11 @@ export default {
     z-index: 0;
     .top_title {
       font-size: 13px;
-      padding: 15px 0 10px 15px;
+      padding-bottom: 10px;
       color: #666666;
       letter-spacing: 0;
       font-weight: 600;
+      padding-left: 15px;
       span {
         color: #1694fb;
       }
@@ -211,6 +470,12 @@ export default {
         font-size: 12px;
         font-weight: normal;
       }
+    }
+    .title_bold {
+      padding: 15px 0 10px 15px;
+    }
+    .turnRed {
+      color: #d91b11;
     }
     .form {
       background: #f2f2f2;
@@ -238,14 +503,26 @@ export default {
       }
       span {
         display: inline-block;
-        width: 82px;
+        min-width: 82px;
       }
       /* 验证码 */
       .getcode {
         padding: 7px 10px;
-        background: #d1ad73;
+        background: #1694fb;
         border-radius: 3px;
         width: 110px;
+        height: 36px;
+        font-size: 13px;
+        color: #ffffff;
+        letter-spacing: 0;
+        border: none;
+      }
+      .havesend {
+        padding: 7px 10px;
+        background: #bababa;
+        border-radius: 3px;
+        width: 110px;
+        height: 36px;
         font-size: 13px;
         color: #ffffff;
         letter-spacing: 0;
@@ -269,6 +546,9 @@ export default {
             display: inline-block;
           }
         }
+      }
+      .redBorder {
+        border: 1px solid #d91b11;
       }
     }
     .agree {

@@ -19,4 +19,7 @@ export default {
   cursor: pointer;
   /* margin-top: 60px; */
 }
+input{
+  outline: none;
+}
 </style>

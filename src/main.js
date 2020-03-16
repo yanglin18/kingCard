@@ -4,9 +4,15 @@ import Vue from "vue";
 import App from "./App";
 import router from "./router";
 import store from "./store";
+import axios from "axios";
+import qs from 'qs'
 
 Vue.config.productionTip = false;
 /* eslint-disable no-new */
+
+Vue.prototype.$axios = axios;
+Vue.prototype.$qs = qs;
+
 new Vue({
   el: "#app",
   router,
@@ -14,3 +20,5 @@ new Vue({
   components: { App },
   template: "<App/>"
 });
+
+
