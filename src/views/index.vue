@@ -13,18 +13,20 @@
 export default {
   data() {
     return {
-      flag: true
+      flag: true,
+      itemcode:''
     };
   },
   mounted() {
     let timer = setInterval(() => {
       this.flag = !this.flag;
     }, 300);
+    this.itemcode = this.$route.query.itemcode;
   },
   methods: {
     navToForm() {
       console.log("fouce生效");
-      this.$router.push({ path: "/form" });
+      this.$router.push({ path: "/form?itemcode="+this.itemcode });
     }
   }
 };
@@ -32,7 +34,7 @@ export default {
 <style lang="scss" scoped>
 .main_page {
   position: relative;
-  background: url("../assets/bg.png") no-repeat center;
+  background: url("../../static/bg.jpg") no-repeat center;
   background-size: cover;
   height: 965px;
   width: 100%;

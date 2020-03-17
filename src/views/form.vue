@@ -24,7 +24,7 @@
             <span>请您注意接收陌生号码的短信或来电哦～</span>
           </div>
         </div>
-        <div class="close" onclick="closeToast()">
+        <div class="close" @click="closeToast()">
           <img src="../assets/close.png" />
         </div>
       </div>
@@ -129,9 +129,9 @@
           />
           <img v-else @click="agree" src="../assets/check.png" alt="" />
           <div class="agree_text">
-            我已阅读并同意<a onclick="toUserAgreement()"
+            我已阅读并同意<a @click="toUserAgreement"
               >《客户入网服务协议及业务协议》</a
-            >、<a href="agreement/announcement .html"
+            >、<a @click="toagree1"
               >《关于客户个人信息收集、使用规则的公告》</a
             >
           </div>
@@ -172,6 +172,7 @@
 import placeSelect from "@/views/components/placeSelect";
 import numberWrap from "@/views/components/numberWrap";
 import chooseNumber from "@/views/components/chooseNumber";
+
 export default {
   components: {
     placeSelect,
@@ -219,8 +220,26 @@ export default {
         this.showRed = 0;
       });
     }
+    // const query = Qs.parse(location.hash.substring(7));
+    // this.form.itemcode = query.itemcode
+    this.form.itemcode = this.$route.query.itemcode;
+    console.log(this.form.itemcode);
   },
   methods: {
+    toUserAgreement() {
+      this.$router.push({
+        path:
+          "/agree2?name=" +
+          this.form.name +
+          "&&phone=" +
+          this.form.mobile
+      });
+    },
+    toagree1(){
+      this.$router.push({
+        path:"/agree1"
+      })
+    },
     selectPlace() {
       this.$store.commit("set_showSelectPlace", 1);
     },
@@ -302,8 +321,12 @@ export default {
     nameInvalid() {
       console.log("22222222222");
     },
+    closeToast() {
+      this.applySuccess = false;
+    },
     // 验证
-    validator() {
+    validator() {},
+    commit() {
       let nameRex = /^[\u4E00-\u9FA5]{2,4}$/;
       let phoneRex = /^1[3456789]\d{9}$/;
       let IDcardRex = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
@@ -368,10 +391,6 @@ export default {
         this.showRed = 8;
         return;
       }
-    },
-    commit() {
-      this.validator();
-      this.Toast = "根据国家实名制要求，请准确提供身份证信息";
       this.$axios({
         method: "post",
         url:
@@ -381,6 +400,9 @@ export default {
         .then(response => {
           if (response.data.code == 0) {
             this.applySuccess = true;
+            this.Toast = "根据国家实名制要求，请准确提供身份证信息";
+            this.showRed = 0;
+            meteor.track("form", { convert_id: 1661374178349067 });
           } else {
             this.requestFail = true;
             this.message = response.data.msg;
@@ -405,6 +427,36 @@ export default {
   display: flex;
   flex-direction: column;
   z-index: 5;
+  .apply_content {
+    background: #ffffff;
+    border-radius: 4px;
+    width: 315px;
+    padding: 20px 15px 25px;
+    .apply_title {
+      font-size: 20px;
+      color: #1694fb;
+      letter-spacing: 0;
+      text-align: center;
+    }
+    .apply_text {
+      font-size: 15px;
+      color: #666666;
+      letter-spacing: 0;
+      text-align: center;
+      line-height: 23px;
+      span {
+        color: #1694fb;
+      }
+    }
+  }
+  .close {
+    margin-top: 20px;
+    text-align: center;
+    img {
+      width: 26px;
+      height: 26px;
+    }
+  }
 }
 // 定位
 .place_shade {
@@ -518,7 +570,7 @@ export default {
         border: none;
       }
       .havesend {
-        padding: 7px 10px;
+        // padding: 7px 10px;
         background: #bababa;
         border-radius: 3px;
         width: 110px;
