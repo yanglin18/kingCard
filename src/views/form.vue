@@ -1,5 +1,6 @@
 <template>
   <div class="mainPage">
+    <loading v-if="Loading"></loading>
     <!-- 遮罩 -->
     <div
       class="shade"
@@ -58,7 +59,7 @@
           <span>验证码</span>
           <input v-model="form.code" placeholder="请输入验证码" />
           <button v-if="haveSend" class="havesend">
-            {{ secend }}后重新获取
+            {{ secend }}s后重新获取
           </button>
           <button v-else class="getcode" @click="getCode()">
             获取验证码
@@ -77,11 +78,10 @@
           @click="selectPlace"
         >
           <span>所在地区</span>
-          <div
-            class="inputDiv"
-            style="height: 100%;flex: 1;border: none;padding: 0;margin-bottom: 0;"
-          >
-            <span>{{ select_place }}</span>
+          <div class="inputDiv">
+            <span :class="select_place == '所在区/县' ? '' : 'selected'">{{
+              select_place
+            }}</span>
           </div>
           <img src="../assets/toRight.png" />
         </div>
@@ -96,11 +96,10 @@
       <div class="form">
         <div class="Box" @click="selectNumberPlace">
           <span>号码归属</span>
-          <div
-            class="inputDiv"
-            style="height: 100%;flex: 1;border: none;padding: 0;"
-          >
-            <span>{{ number_place }}</span>
+          <div class="inputDiv">
+            <span :class="select_place == '所在区/县' ? '' : 'selected'">{{
+              number_place
+            }}</span>
           </div>
           <img src="../assets/toRight.png" />
         </div>
@@ -110,10 +109,7 @@
           :class="showRed === 7 ? 'redBorder' : ''"
         >
           <span>选择号码</span>
-          <div
-            class="inputDiv"
-            style="height: 100%;flex: 1;border: none;padding: 0;"
-          >
+          <div class="inputDiv">
             {{ form.phoneNum }}
           </div>
           <img src="../assets/toRight.png" />
@@ -131,8 +127,11 @@
           <div class="agree_text">
             我已阅读并同意<a @click="toUserAgreement"
               >《客户入网服务协议及业务协议》</a
-            >、<a @click="toagree1"
+            >、<a @click="toagree('/agree2')"
               >《关于客户个人信息收集、使用规则的公告》</a
+            >、<a @click="toagree('/agree3')">《隐私政策》</a>、<a
+              @click="toagree('/agree4')"
+              >《用户使用协议》</a
             >
           </div>
         </div>
@@ -172,12 +171,13 @@
 import placeSelect from "@/views/components/placeSelect";
 import numberWrap from "@/views/components/numberWrap";
 import chooseNumber from "@/views/components/chooseNumber";
-
+import loading from "@/views/components/load";
 export default {
   components: {
     placeSelect,
     numberWrap,
-    chooseNumber
+    chooseNumber,
+    loading
   },
   data() {
     return {
@@ -189,6 +189,7 @@ export default {
       Toast: "根据国家实名制要求，请准确提供身份证信息",
       // 请求失败的弹窗
       requestFail: false,
+      Loading: false,
       message: "",
       userAgree: false,
       showRed: 0,
@@ -213,32 +214,35 @@ export default {
       }
     };
   },
+  // watch:{
+  //   select_place(old){
+  //     if(this.select_place !== '所在区/县'){
+  //       this.
+  //     }
+  //   }
+  // },
   mounted() {
     let inputs = document.querySelectorAll("input");
     for (let i of inputs) {
       i.addEventListener("focus", () => {
         this.showRed = 0;
+        this.Toast = "根据国家实名制要求，请准确提供身份证信息";
       });
     }
     // const query = Qs.parse(location.hash.substring(7));
     // this.form.itemcode = query.itemcode
     this.form.itemcode = this.$route.query.itemcode;
-    console.log(this.form.itemcode);
   },
   methods: {
     toUserAgreement() {
       this.$router.push({
-        path:
-          "/agree2?name=" +
-          this.form.name +
-          "&&phone=" +
-          this.form.mobile
+        path: "/agree2?name=" + this.form.name + "&&phone=" + this.form.mobile
       });
     },
-    toagree1(){
+    toagree(e) {
       this.$router.push({
-        path:"/agree1"
-      })
+        path: e
+      });
     },
     selectPlace() {
       this.$store.commit("set_showSelectPlace", 1);
@@ -391,6 +395,7 @@ export default {
         this.showRed = 8;
         return;
       }
+      this.Loading = true;
       this.$axios({
         method: "post",
         url:
@@ -398,6 +403,7 @@ export default {
         data: this.$qs.stringify(this.form)
       })
         .then(response => {
+          this.Loading = false;
           if (response.data.code == 0) {
             this.applySuccess = true;
             this.Toast = "根据国家实名制要求，请准确提供身份证信息";
@@ -411,7 +417,9 @@ export default {
             }, 3000);
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.Loading = false;
+        });
     }
   }
 };
@@ -483,6 +491,7 @@ export default {
   font-size: 13px;
   color: #bbbbbb;
   letter-spacing: 0;
+  z-index: inherit;
 }
 // 异常吐司
 .shadowTextWrap {
@@ -491,7 +500,6 @@ export default {
   top: 50%;
   min-width: 60%;
   max-width: 100%;
-  white-space: nowrap;
   transform: translate(-50%, -50%);
   text-align: center;
   padding: 10px;
@@ -502,6 +510,7 @@ export default {
 
 .mainPage {
   background: #f8f8f8;
+  max-width: 700px;
   .content {
     min-height: 100vh;
     width: 100%;
@@ -585,17 +594,26 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        div {
+        }
         img {
           height: 17px;
           width: 9px;
         }
         .inputDiv {
+          height: 100%;
+          flex: 1;
+          border: none;
+          padding: 0;
           span {
             font-size: 13px;
             color: #bbbbbb;
             letter-spacing: 0;
             width: 65.5vw;
             display: inline-block;
+          }
+          .selected {
+            color: #666666;
           }
         }
       }
@@ -647,6 +665,7 @@ export default {
         margin-left: 20px;
         border: none;
         flex: 1;
+        height: 45px;
       }
       input:disabled {
         background-color: transparent;

@@ -9,11 +9,19 @@
           v-model="inputIdx"
           id="chooseIdx"
           placeholder="生日、幸运数字等"
+          @focus="inputFocus"
         />
         <img
+          v-if="flag"
           @click="searchByInput()"
           class="searchNumber"
           src="../../assets/search.png"
+        />
+        <img
+          v-else
+          @click="clean()"
+          class="clean"
+          src="../../assets/clean.png"
         />
       </div>
       <div class="phone_number">
@@ -46,7 +54,8 @@ export default {
       numberText: "",
       phoneNumbersArr: [],
       phoneNumberBackups: [], //备份100个电话号码，供查找
-      number: ""
+      number: "",
+      flag: true
     };
   },
   computed: {
@@ -66,6 +75,13 @@ export default {
     }
   },
   methods: {
+    inputFocus(){
+      if(this.inputIdx === ''){
+        this.flag = true
+      }else{
+        this.flag = false
+      }
+    },
     getNumbers() {
       this.$axios({
         method: "post",
@@ -111,6 +127,9 @@ export default {
       if (this.numbers.length === 0) {
         this.numberText = "抱歉没有匹配的号码";
       }
+    },
+    clean() {
+      this.inputIdx = "";
     },
     // 换一批
     exchangeNumber() {
@@ -187,6 +206,10 @@ export default {
         width: 22px;
         margin-right: 8px;
       }
+      .clean {
+        height: 12px;
+        width: 12px;
+      }
     }
     .phone_number {
       display: flex;
@@ -215,7 +238,7 @@ export default {
     height: 45px;
     width: 100%;
     font-size: 15px;
-    color: #d5af6d;
+    color: #1694fb;
     letter-spacing: 0;
     text-align: center;
     border-top: 0.5px solid #bbbbbb;

@@ -33,10 +33,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .main_page {
+  max-width: 700px;
+  margin: 0 auto;
   position: relative;
   background: url("../../static/bg.jpg") no-repeat center;
   background-size: cover;
-  height: 965px;
+  height: 1042px;
   width: 100%;
   .topButton {
     position: absolute;
@@ -53,7 +55,8 @@ export default {
   }
   .bottomButton {
     position: fixed;
-    bottom: 0;
+    max-width: 700px;
+    bottom: 0px;
     width: 100%;
     img {
       width: 100%;
