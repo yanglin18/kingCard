@@ -5,13 +5,20 @@ import App from "./App";
 import router from "./router";
 import store from "./store";
 import axios from "axios";
-import qs from 'qs'
+import qs from "qs";
 
 Vue.config.productionTip = false;
 /* eslint-disable no-new */
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$qs = qs;
+
+router.beforeEach((to, from, next) => {
+  window.scrollTo({
+    top: 0
+  });
+  next();
+});
 
 new Vue({
   el: "#app",
@@ -20,5 +27,3 @@ new Vue({
   components: { App },
   template: "<App/>"
 });
-
-

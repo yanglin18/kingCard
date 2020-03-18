@@ -41,6 +41,7 @@ section {
 .main {
   /* margin: 200px auto;
   text-align: center; */
+  padding-bottom: 100px;
   border-radius: 6px;
   background: rgba(00, 00, 00, 0.7);
   width: 100px;

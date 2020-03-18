@@ -37,7 +37,7 @@ export default {
   margin: 0 auto;
   position: relative;
   background: url("../../static/bg.jpg") no-repeat center;
-  background-size: cover;
+  background-size: 100% 100%;
   height: 1042px;
   width: 100%;
   .topButton {
@@ -58,6 +58,7 @@ export default {
     max-width: 700px;
     bottom: 0px;
     width: 100%;
+    height: 120px;
     img {
       width: 100%;
     }

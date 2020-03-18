@@ -43,7 +43,7 @@
         {{ Toast }}
       </div>
       <div class="form">
-        <div :class="showRed === 1 ? 'redBorder' : ''">
+        <div :class="showRed === 1 ? 'redBorder' : ''" ref="name">
           <span>姓名</span>
           <input v-model="form.name" placeholder="请输入身份证件姓名" /><br />
         </div>
@@ -110,12 +110,12 @@
         >
           <span>选择号码</span>
           <div class="inputDiv">
-            {{ form.phoneNum }}
+            <span class="selected">{{ form.phoneNum }}</span>
           </div>
           <img src="../assets/toRight.png" />
         </div>
       </div>
-      <div class="agree">
+      <div class="agree" :class="showRed === 9 ? 'redBorder' : ''">
         <div class="agreement">
           <img
             v-if="!userAgree"
@@ -150,7 +150,7 @@
         <span>推荐人信息</span>
         <input
           v-model="form.recommend"
-          :disabled="!referFlag"
+          v-show="referFlag"
           placeholder="请填写推荐人号码"
         />
       </div>
@@ -214,13 +214,26 @@ export default {
       }
     };
   },
-  // watch:{
-  //   select_place(old){
-  //     if(this.select_place !== '所在区/县'){
-  //       this.
-  //     }
-  //   }
-  // },
+  computed: {
+    selectPhoneNum() {
+      return this.form.phoneNum;
+    }
+  },
+  watch: {
+    select_place(old) {
+      if (this.select_place !== "所在区/县") {
+        this.showRed = 0;
+        this.Toast = "根据国家实名制要求，请准确提供身份证信息";
+      }
+    },
+    selectPhoneNum(old) {
+      console.log(this.selectPhoneNum);
+      if (this.phoneNum !== "") {
+        this.showRed = 0;
+        this.Toast = "根据国家实名制要求，请准确提供身份证信息";
+      }
+    }
+  },
   mounted() {
     let inputs = document.querySelectorAll("input");
     for (let i of inputs) {
@@ -229,8 +242,6 @@ export default {
         this.Toast = "根据国家实名制要求，请准确提供身份证信息";
       });
     }
-    // const query = Qs.parse(location.hash.substring(7));
-    // this.form.itemcode = query.itemcode
     this.form.itemcode = this.$route.query.itemcode;
   },
   methods: {
@@ -282,6 +293,10 @@ export default {
     },
     agree() {
       this.userAgree = !this.userAgree;
+      if (this.userAgree) {
+        this.showRed = 0;
+        this.Toast = "根据国家实名制要求，请准确提供身份证信息";
+      }
     },
     addRefer() {
       this.referFlag = !this.referFlag;
@@ -316,6 +331,7 @@ export default {
               this.secend = ss;
               if (ss === 0) {
                 clearInterval(timer);
+                this.haveSend = false;
               }
             }, 1000);
           }
@@ -328,8 +344,6 @@ export default {
     closeToast() {
       this.applySuccess = false;
     },
-    // 验证
-    validator() {},
     commit() {
       let nameRex = /^[\u4E00-\u9FA5]{2,4}$/;
       let phoneRex = /^1[3456789]\d{9}$/;
@@ -337,6 +351,11 @@ export default {
       if (!nameRex.test(this.form.name)) {
         this.Toast = "请输入您的真实姓名";
         this.showRed = 1;
+        this.scrollTop =
+          this.$refs.name.offsetTop - this.$refs.name.offsetHeight;
+        window.scrollTo({
+          top: this.scrollTop
+        });
         return;
       }
       if (this.form.certNo === "") {
@@ -425,6 +444,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.redBorder {
+  border: 1px solid #d91b11;
+}
 // 申请成功
 .applySuccess,
 .comformFail {
@@ -547,6 +569,7 @@ export default {
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1px;
+        // border-bottom: #f8f8f8 1px solid;
         padding: 0 15px;
         box-sizing: border-box;
         border: 1px solid #fff;
@@ -571,7 +594,6 @@ export default {
         padding: 7px 10px;
         background: #1694fb;
         border-radius: 3px;
-        width: 110px;
         height: 36px;
         font-size: 13px;
         color: #ffffff;
@@ -579,15 +601,15 @@ export default {
         border: none;
       }
       .havesend {
-        // padding: 7px 10px;
+        padding: 7px 10px;
         background: #bababa;
         border-radius: 3px;
-        width: 110px;
         height: 36px;
         font-size: 13px;
         color: #ffffff;
         letter-spacing: 0;
         border: none;
+        white-space: nowrap;
       }
       .Box {
         height: 45px;
@@ -601,10 +623,11 @@ export default {
           width: 9px;
         }
         .inputDiv {
-          height: 100%;
+          height: 99%;
           flex: 1;
           border: none;
           padding: 0;
+          color: #666666;
           span {
             font-size: 13px;
             color: #bbbbbb;
@@ -617,9 +640,6 @@ export default {
           }
         }
       }
-      .redBorder {
-        border: 1px solid #d91b11;
-      }
     }
     .agree {
       padding: 15px 13px;
@@ -627,6 +647,7 @@ export default {
       background: #ffffff;
       font-size: 12px;
       color: #999999;
+      border: 1px #ffffff solid;
       .agreement {
         margin-bottom: 8px;
         display: flex;
@@ -651,6 +672,7 @@ export default {
       padding: 0 15px;
       align-items: center;
       height: 45px;
+      overflow: hidden;
       span {
         display: flex;
         align-items: center;
@@ -662,10 +684,12 @@ export default {
         padding-right: 6px;
       }
       input {
+        box-sizing: border-box;
         margin-left: 20px;
         border: none;
         flex: 1;
-        height: 45px;
+        height: 100%;
+        line-height: 45px;
       }
       input:disabled {
         background-color: transparent;
