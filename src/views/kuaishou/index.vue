@@ -1,11 +1,15 @@
 <template>
   <div class="main_page">
     <div class="topButton" @click="navToForm()">
-      <img v-if="flag" class="button1" src="../assets/button_l.png" />
-      <img v-else class="button2" src="../assets/button_s.png" />
+      <img
+        v-if="flag"
+        class="button1"
+        src="../../assets/kuaishou/button_l.png"
+      />
+      <img v-else class="button2" src="../../assets/kuaishou/button_s.png" />
     </div>
     <div class="bottomButton" @click="navToForm()">
-      <img src="../assets/button_f.png" />
+      <img src="../../assets/kuaishou/button_f.png" />
     </div>
   </div>
 </template>
@@ -26,7 +30,7 @@ export default {
   methods: {
     navToForm() {
       console.log("fouce生效");
-      this.$router.push({ path: "/form", query: { itemcode: this.itemcode } });
+      this.$router.push({ path: "./form", query: { itemcode: this.itemcode } });
     }
   }
 };
@@ -36,21 +40,21 @@ export default {
   max-width: 700px;
   margin: 0 auto;
   position: relative;
-  background: url("../../static/bgDY1.jpg") no-repeat center;
+  background: url("../../../static/bgKS.jpg") no-repeat center;
   background-size: 100% 100%;
-  height: 1042px;
+  height: 1127px;
   width: 100%;
   .topButton {
     position: absolute;
-    top: 396px;
+    top: 492px;
     text-align: center;
-    margin-left: calc(50% - 125px);
+    margin-left: calc(50% - 157px);
     .button1 {
-      width: 250px;
+      width: 314px;
     }
     .button2 {
-      width: 218px;
-      margin-left: 16px;
+      width: 295px;
+      margin-left: 10px;
     }
   }
   .bottomButton {
@@ -58,9 +62,12 @@ export default {
     max-width: 700px;
     bottom: 0px;
     width: 100%;
-    height: 120px;
+    height: 95px;
+    margin: 0 auto;
+    text-align: center;
     img {
-      width: 100%;
+      width: 335px;
+      height: 65px;
     }
   }
 }

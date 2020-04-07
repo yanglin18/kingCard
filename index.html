@@ -1,46 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name ="viewport" content ="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>腾讯大王卡</title>
-    <!-- Bytedance Tracking -->
-    <script>
-      (function(r, d, s, l) {
-        var meteor = (r.meteor = r.meteor || []);
-        meteor.methods = ["track", "off", "on"];
-        meteor.factory = function(method) {
-          return function() {
-            var args = Array.prototype.slice.call(arguments);
-            args.unshift(method);
-            meteor.push(args);
-            return meteor;
-          };
-        };
-        for (var i = 0; i < meteor.methods.length; i++) {
-          var key = meteor.methods[i];
-          meteor[key] = meteor.factory(key);
-        }
-        meteor.load = function() {
-          var js,
-            fjs = d.getElementsByTagName(s)[0];
-          js = d.createElement(s);
-          js.src = "https://analytics.snssdk.com/meteor.js/v1/" + l + "/sdk";
-          fjs.parentNode.insertBefore(js, fjs);
-        };
-        meteor.load();
-        if (meteor.invoked) {
-          return;
-        }
-        meteor.invoked = true;
-        meteor.track("pageview");
-      })(window, document, "script", "1655055805385740");
-    </script>
-    <!-- End Bytedance Tracking -->
-  </head>
-  <body style="margin: 0px;">
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+  <meta http-equiv="Access-Control-Allow-Origin" content="ie=edge" />
+  <title>腾讯大王卡</title>
+  <!-- ks-trace -->
+  <script type="text/javascript">
+    (function (root)
+    {
+      var ksscript = document.createElement('script');
+      ksscript.setAttribute('charset', 'utf-8');
+      ksscript.src = 'https://static.yximgs.com/udata/pkg/ks-ad-trace-sdk/ks-trace.2.0.1.beta.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(ksscript, s);
+    })(window);
+  </script>
+  <!-- end ks-trace -->
+</head>
+
+<body style="margin: 0px;">
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+
 </html>

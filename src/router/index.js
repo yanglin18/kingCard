@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import HelloWorld from "@/components/HelloWorld";
 import index from "@/views/index";
 import form from "@/views/form";
 import agree1 from "@/views/components/agreement/agreement1";
@@ -10,11 +9,12 @@ import agree4 from "@/views/components/agreement/agreement4";
 Vue.use(Router);
 
 export default new Router({
+  
   routes: [
     {
       path: "/",
       name: "index",
-      component: index
+      component: ()=>import("@/views/kuaishou/index.vue")
     },
     {
       path: "/form",

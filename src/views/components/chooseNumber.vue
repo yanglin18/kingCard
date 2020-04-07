@@ -12,16 +12,9 @@
           @focus="inputFocus"
         />
         <img
-          v-if="flag"
           @click="searchByInput()"
           class="searchNumber"
           src="../../assets/search.png"
-        />
-        <img
-          v-else
-          @click="clean()"
-          class="clean"
-          src="../../assets/clean.png"
         />
       </div>
       <div class="phone_number">

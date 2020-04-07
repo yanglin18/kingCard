@@ -179,6 +179,7 @@ export default {
     mounted(){
         this.name = this.$route.query.name;
         this.phone = this.$route.query.phone;
+        console.log(name)
         let d = new Date();
         this.date = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'
     }
