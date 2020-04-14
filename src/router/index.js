@@ -14,7 +14,10 @@ export default new Router({
     {
       path: "/",
       name: "index",
-      component: ()=>import("@/views/kuaishou/index.vue")
+      component: ()=>import("@/views/singlePage/index.vue"),
+      meta: {
+        keepAlive: true // 需要缓存的页面
+      }
     },
     {
       path: "/form",

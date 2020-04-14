@@ -303,7 +303,7 @@
       // 获取验证码
       getCode()
       {
-        this.conform();
+        // this.conform();
         let phoneRex = /^1[3456789]\d{9}$/;
         if (this.form.mobile === "") {
           this.Toast = "请输入您的联系电话";
@@ -317,7 +317,7 @@
         }
         this.$axios({
           url:
-            "https://simcard.yingbei365.com/public/index.php/member/Index/getCode",
+            "https://simcard.houselai.com/public/index.php/member/Index/getCode",
           method: "post",
           data: this.$qs.stringify({
             mobile: this.form.mobile
@@ -429,14 +429,13 @@
         this.$axios({
           method: "post",
           url:
-            "https://simcard.yingbei365.com/public/index.php/member/index/create_order",
+            "https://simcard.houselai.com/public/index.php/member/index/create_order",
           data: this.$qs.stringify(this.form)
         })
           .then(response =>
           {
             this.Loading = false;
             if (response.data.code == 0) {
-              // meteor.track("form", { convert_id: 1661374178349067 });
               _ks_trace.push({
                 event: 'form', convertId: 22562, cb: function ()
                 {
@@ -551,7 +550,7 @@
     background: rgba(0, 0, 0, 0.7);
   }
 
-  // input 的placeholder
+  /* // input 的placeholder */
   ::-webkit-input-placeholder {
     font-size: 13px;
     color: #bbbbbb;

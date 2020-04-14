@@ -1,9 +1,10 @@
 <template>
   <div class="content" v-if="$store.state.showSelectPlace">
-    <div class="title">
+    <!-- <div class="title">
       <span @click="hide">取消</span>
       <span class="select">完成</span>
-    </div>
+    </div> -->
+    <div class="boxShade" @click="hide"></div>
     <div class="placeWrap">
       <ul class="placeBox">
         <li v-for="(province, indexP) in placeArr" :key="indexP" @click="getCity(province, indexP)"
@@ -101,7 +102,7 @@
     }
   };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .content {
     position: fixed;
     bottom: 0;
@@ -112,16 +113,16 @@
     font-size: 16px;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
+    z-index: 2000;
 
-    .title {
-      padding: 15px 20px 10px;
-      display: flex;
-      justify-content: space-between;
-      border: 0.5px solid #f8f8f8;
-
-      .select {
-        color: #007AFF;
-      }
+    .boxShade {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: calc(100vh - 200px);
+      width: 100vw;
+      background: rgba(0, 0, 0, .7);
+      z-index: 1;
     }
 
     .placeWrap {
@@ -130,11 +131,14 @@
       display: flex;
       height: 200px;
       width: 100vw;
+      z-index: 100;
+      background: #ffffff;
 
       .placeBox {
         flex: 1;
         padding-left: 10px;
         overflow-y: auto;
+
 
         .active {
           color: #333333;

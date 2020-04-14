@@ -79,7 +79,7 @@ export default {
       this.$axios({
         method: "post",
         url:
-          "https://simcard.yingbei365.com/public/index.php/member/index/get_select_num",
+          "https://simcard.houselai.com/public/index.php/member/index/get_select_num",
         data: this.$qs.stringify({
           goodsId: "981610241535",
           p_code: this.$store.state.p_code,
@@ -137,7 +137,7 @@ export default {
       console.log(e);
       this.$axios({
         url:
-          "https://simcard.yingbei365.com/public/index.php/member/index/occupation_number",
+          "https://simcard.houselai.com/public/index.php/member/index/occupation_number",
         method: "post",
         data: this.$qs.stringify({
           p_code: this.$store.state.p_code,
