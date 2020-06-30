@@ -97,6 +97,13 @@
     本协议条款无论因何种原因部分无效或不可执行，其余条款仍有效，对双方具有约束力。<br />
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {};
+  },
+};
+</script>
 <style scoped>
 .content {
   padding: 25px 20px;

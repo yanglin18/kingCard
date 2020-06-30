@@ -305,6 +305,7 @@
       {
         // this.conform();
         let phoneRex = /^1[3456789]\d{9}$/;
+        let IDcardRex = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
         if (this.form.mobile === "") {
           this.Toast = "请输入您的联系电话";
           this.showRed = 3;
@@ -315,12 +316,18 @@
           this.showRed = 3;
           return;
         }
+        if (!IDcardRex.test(this.form.certNo)) {
+          this.Toast = "请输入正确的身份证";
+          this.showRed = 2;
+          return;
+        }
         this.$axios({
           url:
             "https://simcard.houselai.com/public/index.php/member/Index/getCode",
           method: "post",
           data: this.$qs.stringify({
-            mobile: this.form.mobile
+            mobile: this.form.mobile,
+            certNo: this.form.certNo
           })
         })
           .then(res =>
@@ -337,6 +344,14 @@
                   this.haveSend = false;
                 }
               }, 1000);
+            }
+            if(res.data.code == 90){
+              this.requestFail = true;
+              this.message = res.data.msg;
+              setTimeout(() =>
+              {
+                this.requestFail = false;
+              }, 3000);
             }
           })
           .catch({});
@@ -442,7 +457,8 @@
                   console.log('Your callback function here!')
                 }
               })
-              this.conform()
+              
+              // this.conform()
               this.applySuccess = true;
               this.Toast = "根据国家实名制要求，请准确提供身份证信息";
               this.showRed = 0;
@@ -462,7 +478,7 @@
       },
       conform()
       {
-        let Url = "https://bdsimcard.houselai.com/2323/?itemcode=" + this.form.itemcode + "&adid=" + this.adid + "&clickid=" + this.clickid + "&creativeid=" + this.creativeid + "&creativetype=" + this.creativetype + ""
+        let Url = "https://dysimcard.houselai.com?itemcode=" + this.form.itemcode + "&adid=" + this.adid + "&clickid=" + this.clickid + "&creativeid=" + this.creativeid + "&creativetype=" + this.creativetype + ""
         this.$axios({
           method: "get",
           url: "https://ad.toutiao.com/track/activate/?link=" + encodeURIComponent(Url) + "&event_type=3"

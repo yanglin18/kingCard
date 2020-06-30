@@ -9,12 +9,27 @@ import agree4 from "@/views/components/agreement/agreement4";
 Vue.use(Router);
 
 export default new Router({
-  
   routes: [
+    // {
+    //   path: "/",
+    //   name: "form",
+    //   component: () => import("@/views/gdtform.vue"),
+    //   meta: {
+    //     keepAlive: true // 需要缓存的页面
+    //   }
+    // },
     {
       path: "/",
       name: "index",
-      component: ()=>import("@/views/singlePage/index.vue"),
+      component: () => import("@/views/singlePage/index.vue"),
+      meta: {
+        keepAlive: true // 需要缓存的页面
+      }
+    },
+    {
+      path: "/",
+      name: "shortform",
+      component: () => import("@/views/gdtform.vue"),
       meta: {
         keepAlive: true // 需要缓存的页面
       }
@@ -26,6 +41,16 @@ export default new Router({
       meta: {
         keepAlive: true // 需要缓存的页面
       }
+    },
+    {
+      path: "/moreUse",
+      name: "moreUse",
+      component: () => import("@/views/components/3card/moreUseLimit.vue")
+    },
+    {
+      path: "/moreDetail",
+      name: "moreDetail",
+      component: () => import("@/views/components/3card/moredetail.vue")
     },
     {
       path: "/agree1",

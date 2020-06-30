@@ -119,6 +119,9 @@
     一般情况下，我们将在收到您的疑问、意见或建议后三十天内回复<br />
   </div>
 </template>
+<script>
+export default {};
+</script>
 <style scoped>
 .content {
   padding: 25px 20px;

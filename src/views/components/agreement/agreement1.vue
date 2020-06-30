@@ -19,9 +19,11 @@
     <div>(d)为维护社会公众的利益所必需且适当；</div>
     <div>(e)为维护我公司或客户的合法权益所必需且适当。</div>
     <div class="text1">中国联合网络通信有限公司</div>
-    
   </div>
 </template>
+<script>
+export default {};
+</script>
 <style scoped>
 .content {
   padding: 25px 20px;
@@ -33,7 +35,7 @@
 .text {
   padding-bottom: 15px;
 }
-.text1{
-    margin-top: 15px;
+.text1 {
+  margin-top: 15px;
 }
 </style>

@@ -4,7 +4,7 @@
       客户入网服务协议及业务协议
     </div>
     中国联通客户入网服务协议 <br />
-    甲方：<span class="name">{{name}}</span> <br />
+    甲方：<span class="name">{{ name }}</span> <br />
     乙方：中国联合网络通信有限公司 广东公司<br />
     根据《中华人民共和国合同法》、《中华人民共和国电信条例》等有关法律法规的规定，甲乙双方在平等、自愿、公平、诚信的基础上，基于对乙方通信服务的了解和需求，甲方自愿申请成为乙方客户，并达成协议如下：<br />
     <div class="span">第一条 入网要求及业务办理</div>
@@ -124,7 +124,7 @@
     在本协议签约页面点击确认签署本协议前，请确保您已充分阅读并完全同意本协议内容，一旦您点击确认签署本协议，即表明您已充分阅读并完全同意本协议内容，本协议即在您与乙方（中国联合网络通信有限公司广东分公司）之间产生法律效力。如果您不同意本协议的任意内容，或者无法准确理解乙方（中国联合网络通信有限公司广东分公司）对条款的解释，请不要进行后续操作。本协议一式两份，甲乙双方各执一份，有效期一年。协议到期后，双方如无异议，有效期以一年为周期自动顺延。<br />
     <br />
     中国联通客户腾讯王卡移网业务优惠活动业务协议 <br />
-    甲方：<span class="name">{{name}}</span> <br />
+    甲方：<span class="name">{{ name }}</span> <br />
     乙方：中国联合网络通信有限公司 广东分公司<br />
     本协议作为《中国联通客户入网服务协议》的补充协议，甲乙双方在平等自愿、公平诚信的基础上，基于对乙方腾讯王卡移网通信服务的了解和需求，达成协议如下：<br />
     第一条<br />
@@ -161,29 +161,34 @@
     d) 为维护社会公众的利益所必需且适当；<br />
     e) 为维护我公司或客户的合法权益所必需且适当。<br />
     （甲方承诺：本人已经充分、完整阅读并理解本协议所述全部条款及条件。如申请或使用乙方提供的业务，即视为您已阅读并同意受本协议的约束。）<br />
-    甲方：<span class="name">{{name}}</span> <br />
+    甲方：<span class="name">{{ name }}</span> <br />
     乙方：中国联合网络通信有限公司广东分公司<br />
-    甲方用户号码：<span class="phone">{{phone}}</span><br />
-    签署日期： <span class="date">{{date}}</span><br />
+    甲方用户号码：<span class="phone">{{ phone }}</span
+    ><br />
+    签署日期： <span class="date">{{ date }}</span
+    ><br />
   </div>
 </template>
 <script>
 export default {
-    data(){
-        return{
-            name:'',
-            phone:'',
-            date:''
-        }
-    },
-    mounted(){
-        this.name = this.$route.query.name;
-        this.phone = this.$route.query.phone;
-        console.log(name)
-        let d = new Date();
-        this.date = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'
-    }
-}
+  data() {
+    return {
+      name: "",
+      phone: "",
+      date: "",
+    };
+  },
+  onLoad(e) {
+    console.log(e);
+    this.name = e.name;
+    this.phone = e.phone;
+  },
+  mounted() {
+    let d = new Date();
+    this.date =
+      d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日";
+  },
+};
 </script>
 <style scoped>
 .content {
