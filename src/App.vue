@@ -63,5 +63,38 @@ input {
   html {
     font-size: 89.6px !important;
   }
+<<<<<<< HEAD
 }
 </style>
+=======
+  @media only screen and (min-width: 320px) {
+    html {
+        font-size: 19PX !important;
+    }
+}
+
+@media only screen and (min-width: 375px) {
+    html {
+        font-size: 20PX !important;
+    }
+}
+
+@media only screen and (min-width: 400px) {
+    html {
+        font-size: 21.33333333PX !important;
+    }
+}
+
+@media only screen and (min-width: 414px) {
+    html {
+        font-size: 22.08PX !important;
+    }
+}
+
+@media only screen and (min-width: 480px) {
+    html {
+        font-size: 25.6PX !important;
+    }
+}
+</style>
+>>>>>>> 8f9c8e6d85493be14794cf98593d33cff2a9ef95
